@@ -1,7 +1,39 @@
+#!/usr/bin/env python3
 import os
 import subprocess
+import click
+import shutil
+import tempfile
 from PIL import Image
 import pytesseract
+
+@click.command()
+@click.option('--video-path', required=True, type=click.Path(exists=True), help="Path to the input video file.")
+@click.option('--output-pdf', required=True, type=click.Path(), help="Path to the output PDF file.")
+def process_video_to_pdf(video_path, output_pdf):
+    """Main function to process video and create a text-searchable PDF."""
+    
+    # Create a temporary workdir
+    workdir = tempfile.mkdtemp()
+    print(f"Working in temporary directory: {workdir}")
+    
+    output_pattern = os.path.join(workdir, "output_image_%03d.png")
+    extract_frames(video_path, output_pattern)
+    
+    image_files = sorted([os.path.join(workdir, f) for f in os.listdir(workdir) if f.startswith('output_image_') and f.endswith('.png')])
+    pdf_files = []
+    
+    for image_file in image_files:
+        remove_watermark(image_file)
+        pdf_file = image_file.replace('.png', '_ocr.pdf')
+        ocr_image_to_pdf(image_file, pdf_file)
+        pdf_files.append(pdf_file)
+    
+    combine_pdfs(pdf_files, output_pdf)
+    
+    # Clean up intermediate files
+    shutil.rmtree(workdir)
+    print(f"Processing complete. Final PDF saved as {output_pdf}.")
 
 def extract_frames(video_path, output_pattern):
     """Extract unique frames from a video using ffmpeg."""
@@ -29,33 +61,5 @@ def combine_pdfs(pdf_list, output_pdf):
     subprocess.run(gs_command, shell=True)
     print(f"Combined all PDFs into {output_pdf}.")
 
-def process_video_to_pdf(video_path, output_pdf):
-    """Main function to process video and create a text-searchable PDF."""
-    output_pattern = "output_image_%03d.png"
-    extract_frames(video_path, output_pattern)
-    
-    image_files = sorted([f for f in os.listdir('.') if f.startswith('output_image_') and f.endswith('.png')])
-    pdf_files = []
-    
-    for image_file in image_files:
-        remove_watermark(image_file)
-        pdf_file = image_file.replace('.png', '_ocr.pdf')
-        ocr_image_to_pdf(image_file, pdf_file)
-        pdf_files.append(pdf_file)
-    
-    combine_pdfs(pdf_files, output_pdf)
-    
-    # Clean up intermediate files
-    for image_file in image_files:
-        os.remove(image_file)
-    for pdf_file in pdf_files:
-        os.remove(pdf_file)
-    
-    print(f"Processing complete. Final PDF saved as {output_pdf}.")
-
-# Replace these with your input video path and desired output PDF path
-video_path = "input.mov"
-output_pdf = "output.pdf"
-
-process_video_to_pdf(video_path, output_pdf)
-
+if __name__ == '__main__':
+    process_video_to_pdf()
