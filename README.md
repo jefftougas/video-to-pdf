@@ -12,11 +12,11 @@ Before you can run this project, you'll need to install the following software:
 - **Tesseract-OCR**: Used for Optical Character Recognition (OCR) to convert images into text-searchable PDFs. You can install it from [here](https://github.com/tesseract-ocr/tesseract).
 - **Ghostscript**: Used to combine multiple PDFs into a single file. Install it from [here](https://www.ghostscript.com/download/gsdnld.html).
 
-## Installation
+If you have homebrew, you can install these prereqs as follows:
 
-1. Install the required Python packages:
-
-
+```bash
+brew install ffmpeg imagemagick tesseract ghostscript
+```
 
 ## Usage
 
