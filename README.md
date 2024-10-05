@@ -24,6 +24,8 @@ Before you can run this project, you'll need to install the following software:
 2. Install the required Python packages:
 
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
