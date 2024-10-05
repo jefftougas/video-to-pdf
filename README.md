@@ -15,7 +15,7 @@ Before you can run this project, you'll need to install the following software:
 If you have homebrew, you can install these prereqs as follows:
 
 ```bash
-brew install ffmpeg imagemagick tesseract ghostscript
+brew install python@3.12 ffmpeg imagemagick tesseract ghostscript
 ```
 
 ## Usage
