@@ -130,3 +130,6 @@ celerybeat-schedule
 # Windows-specific
 Thumbs.db
 ehthumbs.db
+
+*.mov
+*.pdf
